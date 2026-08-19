@@ -37,23 +37,30 @@ type WaMediaField struct {
 	MimeType string `json:"mime_type"`
 	Caption  string `json:"caption,omitempty"`
 }
+
 type WaReceivedTextField struct {
 	Body string `json:"body"`
 }
 type WaReceivedProfileField struct {
 	Name string `json:"name"`
 }
+
+type WaReceivedContextField struct {
+	From string `json:"from"`
+	Id   string `json:"id"`
+}
 type WaReceivedMessage struct {
-	From        string               `json:"from"`
-	FromUserId  string               `json:"from_user_id"`
-	Id          string               `json:"id"`
-	TimeStamp   string               `json:"timestamp"`
-	MessageType string               `json:"type"`
-	Text        *WaReceivedTextField `json:"text,omitempty"`
-	Image       *WaMediaField        `json:"image,omitempty"`
-	Audio       *WaMediaField        `json:"audio,omitempty"`
-	Video       *WaMediaField        `json:"video,omitempty"`
-	Document    *WaMediaField        `json:"document,omitempty"`
+	From        string                  `json:"from"`
+	FromUserId  string                  `json:"from_user_id"`
+	Id          string                  `json:"id"`
+	TimeStamp   string                  `json:"timestamp"`
+	MessageType string                  `json:"type"`
+	Context     *WaReceivedContextField `json:"context,omitempty"`
+	Text        *WaReceivedTextField    `json:"text,omitempty"`
+	Image       *WaMediaField           `json:"image,omitempty"`
+	Audio       *WaMediaField           `json:"audio,omitempty"`
+	Video       *WaMediaField           `json:"video,omitempty"`
+	Document    *WaMediaField           `json:"document,omitempty"`
 }
 type WaReceivedContact struct {
 	Profile WaReceivedProfileField `json:"profile"`
