@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -96,8 +97,18 @@ func webhookHandle(producer *kafka.Producer, w http.ResponseWriter, r *http.Requ
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	log.Printf("Webhook received at %s", timestamp)
 
+	rawBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("Erro ao ler o corpo da requisição: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	log.Printf("Payload bruto recebido: %s", string(rawBody))
+
 	var body WaReceivedResponse
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := json.Unmarshal(rawBody, &body); err != nil {
 		log.Printf("Erro ao fazer parse do webhook: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -121,7 +132,6 @@ func webhookHandle(producer *kafka.Producer, w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		log.Printf("Erro ao enfileirar no Kafka: %v", err)
 	}
-
 }
 
 func webhookVerify(w http.ResponseWriter, r *http.Request) {
